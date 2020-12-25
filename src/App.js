@@ -1,63 +1,63 @@
 import React, { Component } from 'react';
+import {Switch, Route} from 'react-router-dom';
 import './App.css';
-import ipfs from './ipfs';
-import { Form, Button, FormGroup, FormControl, ControlLabel} from "react-bootstrap";
+import Web3 from 'web3';
+import {Header} from './components/Header'
+import {Send} from './components/Send'
+import {Home} from './components/Home'
 
 class App extends Component {
-  state = {
-    ipfsHash: null,
-    buffer: '',
-    filename: ''
-  };
 
-  captureFile =(event) => {
-    event.stopPropagation()
-    event.preventDefault()
-    const file = event.target.files[0]
-    this.setState({filename:file.name})
-    let reader = new window.FileReader()
-    reader.readAsArrayBuffer(file)
-    reader.onloadend = () => this.convertToBuffer(reader)    
-  };
-  convertToBuffer = async(reader) => {
-        const buffer = await Buffer.from(reader.result);
-        this.setState({buffer});
+  async componentWillMount(){
+    await this.loadWeb3();
+    await this.loadBlockchainData();
+  }
+
+
+  async loadWeb3(){
+    if(window.ethereum){
+      window.web3 = new Web3(window.ethereum)
+      await window.ethereum.enable()
+      console.log('Accessed ethereum')
+    }
+    else if(window.web3){
+      window.web3 = new Web3(window.web3.currentProvider)
+      console.log('Accessed current provider')
+    }
+    else{
+      window.alert('Non-ethereum browser detected. Install metamask!!')
+    }
+  }
+
+  async loadBlockchainData(){
+    // Load account
+    const web3 = window.web3
+    const accounts = await web3.eth.getAccounts()
+    console.log(accounts)
+    this.setState({account: accounts[0]})
+
+    //Load contract abi - to be implemented
+  }
+
+  constructor(props){
+    super(props);
+    this.state = {
+      account: 'default', // current account retreived from metamask
+      contract: null // current abi in use
     };
-
-  onSubmit = async (event) => {
-    event.preventDefault();
-
-    await ipfs.add(this.state.buffer, (err, ipfsHash) => {
-        console.log(err,ipfsHash, this.state.filename); 
-        this.setState({ ipfsHash:ipfsHash[0].hash });
-      })
-  };
+  }
 
   render() {
     return (
         <div className="App">
-          <header className="App-header">
-            <h1> Insert Page</h1>
-          </header>
-          
-          <hr />
-            <h3> Choose file to send to IPFS </h3>
-            <Form onSubmit={this.onSubmit}>
-            <input 
-              type = "file"
-              onChange = {this.captureFile}
-            />
-             <Button 
-             bsStyle="primary" 
-             type="submit"> 
-             Send it 
-             </Button>
-            </Form>
-            <hr/>
-         </div> 
-      );
+          <Header user={this.state.account}/>
+          <Switch>
+            <Route exact path="/" component={Home} />
+            <Route exact path="/send" component={Send} />
+          </Switch>
+        </div> 
+    );
   }
-
 }
 
 export default App;

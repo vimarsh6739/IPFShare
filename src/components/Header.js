@@ -23,6 +23,10 @@ export class Header extends React.Component {
                     <IndexLinkContainer to="/send">
                         <Nav.Link>Send Data</Nav.Link>
                     </IndexLinkContainer>
+
+                    <IndexLinkContainer to="/search">
+                        <Nav.Link>Search</Nav.Link>
+                    </IndexLinkContainer>
                 </Nav>
             </Navbar.Collapse>
             

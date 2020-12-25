@@ -5,7 +5,7 @@ import Web3 from 'web3';
 import {Header} from './components/Header'
 import {Send} from './components/Send'
 import {Home} from './components/Home'
-
+import {Search} from './components/Search'
 class App extends Component {
 
   async componentWillMount(){
@@ -41,6 +41,7 @@ class App extends Component {
 
   constructor(props){
     super(props);
+    console.log("Hello there");
     this.state = {
       account: 'default', // current account retreived from metamask
       contract: null // current abi in use
@@ -54,6 +55,7 @@ class App extends Component {
           <Switch>
             <Route exact path="/" component={Home} />
             <Route exact path="/send" component={Send} />
+            <Route exact path="/search" component={Search} />
           </Switch>
         </div> 
     );

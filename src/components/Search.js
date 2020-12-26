@@ -1,9 +1,11 @@
 import React, {Component} from 'react';
 import {Form, Button } from 'react-bootstrap';
-const getEditDistance = function(a, b){
-    if(a.length == 0) return b.length; 
-    if(b.length == 0) return a.length; 
-  
+const getEditDistance = function(a1, b1){
+    var a = a1.toLowerCase();
+    var b = b1.toLowerCase();
+    if(a.length === 0) return b.length; 
+    if(b.length === 0) return a.length; 
+
     var matrix = [];
   
     // increment along the first column of each row
@@ -21,7 +23,7 @@ const getEditDistance = function(a, b){
     // Fill in the rest of the matrix
     for(i = 1; i <= b.length; i++){
       for(j = 1; j <= a.length; j++){
-        if(b.charAt(i-1) == a.charAt(j-1)){
+        if(b.charAt(i-1) === a.charAt(j-1)){
           matrix[i][j] = matrix[i-1][j-1];
         } else {
           matrix[i][j] = Math.min(matrix[i-1][j-1] + 1, // substitution
@@ -37,8 +39,8 @@ export class Search extends Component{
     constructor(props){
         super(props);
         this.state = {
-            text: null,
-            result:null,
+            text: "",
+            result:[],
             keyval: {'book1':'hash1','book4':'hash4','book3':'hash3','book2':'hash2'}
         }
         this.handleChange = this.handleChange.bind(this);
@@ -50,7 +52,16 @@ export class Search extends Component{
     }
     handleSubmit(event) {
      
-        this.setState({result:this.state.text},function(){console.log(getEditDistance(this.state.text,"BOOK"))});
+        var keys = [];
+        for(var k in this.state.keyval)
+          keys.push([getEditDistance(k,this.state.text),k]);
+        keys.sort();
+        var result = [];
+        for(var i=0;i<Math.min(5,keys.length);i++)
+        {
+          result.push(keys[i][1]);
+        }
+        this.setState({result:result});
         event.preventDefault();
       }
     render(){
@@ -68,8 +79,12 @@ export class Search extends Component{
                         </div>
                     </Form>
                 </div>
-                <div>
-                    {this.state.result}
+                <div  style={{display: 'flex',  justifyContent:'center', alignItems:'center'}}>
+                    <ol>
+                      {this.state.result.map((k) => (
+                         <li>{k}</li>
+                      ))}
+                    </ol>
                 </div>
             </div>
             

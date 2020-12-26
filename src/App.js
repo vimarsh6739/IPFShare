@@ -8,9 +8,10 @@ import {Home} from './components/Home'
 import {Search} from './components/Search'
 class App extends Component {
 
-  async componentWillMount(){
+  async componentDidMount(){
     await this.loadWeb3();
     await this.loadBlockchainData();
+    await this.isAuthenticated();
   }
 
 
@@ -18,6 +19,7 @@ class App extends Component {
     if(window.ethereum){
       window.web3 = new Web3(window.ethereum)
       await window.ethereum.enable()
+      window.ethereum.autoRefreshOnNetworkChange = false
       console.log('Accessed ethereum')
     }
     else if(window.web3){
@@ -37,25 +39,54 @@ class App extends Component {
     this.setState({account: accounts[0]})
 
     //Load contract abi - to be implemented
+
+  }
+
+  async isAuthenticated(){
+    //query contract and set state
+    this.setState({isAuth: false})
   }
 
   constructor(props){
     super(props);
-    console.log("Hello there");
     this.state = {
-      account: 'default', // current account retreived from metamask
-      contract: null // current abi in use
+      account: '0xQuixoticDoppleganger', // current account retreived from metamask
+      contract: null, // current abi in use
+      isAuth: false, // is the current user present in our blockchain??
     };
+    this.setAuthTrue = this.setAuthTrue.bind(this);
+    this.setAuthFalse = this.setAuthFalse.bind(this);
   }
+
+  setAuthTrue(){this.setState({isAuth: true})}
+  setAuthFalse(){this.setState({isAuth: false})}
 
   render() {
     return (
         <div className="App">
-          <Header user={this.state.account}/>
+          <Header account={this.state.account}/>
           <Switch>
-            <Route exact path="/" component={Home} />
-            <Route exact path="/send" component={Send} />
-            <Route exact path="/search" component={Search} />
+            <Route exact path="/" 
+              render={(props) => 
+                (<Home {...props} 
+                  data={this.state}
+                  handle={this.setAuthTrue}
+                />)} 
+            />
+            <Route exact path="/send"  
+              render={(props) => 
+                (<Send {...props} 
+                  data={this.state}
+                  handle={this.setAuthFalse}
+                />)}
+            />
+            <Route exact path="/search" 
+              render={(props) =>
+                (<Search {...props}
+                  data={this.state} 
+                />)} 
+            />
+            <Route render={() => <p>Page not found!</p>} />
           </Switch>
         </div> 
     );

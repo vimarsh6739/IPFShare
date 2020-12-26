@@ -9,7 +9,7 @@ export class Header extends React.Component {
             {/* Printing account address currently using dapp */}
             <IndexLinkContainer to="/">
             <Navbar.Brand>
-                {this.props.user.substring(0,5) + ".."}
+                {this.props.account.substring(0,5) + ".."}
             </Navbar.Brand>
             </IndexLinkContainer>
 
@@ -21,7 +21,7 @@ export class Header extends React.Component {
                     </IndexLinkContainer>
 
                     <IndexLinkContainer to="/send">
-                        <Nav.Link>Send Data</Nav.Link>
+                        <Nav.Link>Your Data</Nav.Link>
                     </IndexLinkContainer>
 
                     <IndexLinkContainer to="/search">

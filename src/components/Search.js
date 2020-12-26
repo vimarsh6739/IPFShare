@@ -48,7 +48,6 @@ export class Search extends Component{
     }
     handleChange(event) {
         this.setState({text: event.target.value});
-        
     }
     handleSubmit(event) {
      
@@ -66,7 +65,9 @@ export class Search extends Component{
       }
     render(){
         return(
-            <div >
+            <div className="Search">
+              <h3>Search Files</h3>
+              <p>Works for any file in the network</p>
                 <div class="searchBar" style={{display: 'flex',  justifyContent:'center', alignItems:'center'}}>
                     <Form onSubmit={this.handleSubmit}>
                         <Form.Group style={{display:'inline-block'}}>

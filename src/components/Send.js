@@ -34,7 +34,11 @@ class Add extends Component{
     try{
       await ipfs.files.write(this.state.filepath, this.state.buffer, {create: true})
       const stats = await ipfs.files.stat(this.state.filepath)
-      console.log(stats)
+      console.log('Ipfs dir new Hash:',stats.cid.toString())
+      this.props.data.contract.methods.updateHash(stats.cid.toString()).send({from:this.props.data.account}).then((receipt)=>{
+        console.log(receipt)
+      })
+
     } catch(err){
       window.alert(err)
     }
@@ -65,11 +69,16 @@ class Remove extends Component{
 
   onSubmit = async (event) => {
     event.preventDefault();
-    // console.log('Recorded filename::', this.state.filename)
-    var filepath = '/u' + this.props.data.account + '/' + this.state.filename;
+    var dirName = '/u' + this.props.data.account
+    var filepath = dirName + '/' + this.state.filename;
     try{
       await ipfs.files.rm(filepath)
       console.log('Deleted file', filepath)
+      const stats = await ipfs.files.stat(dirName)
+      console.log('Ipfs dir new Hash:',stats.cid.toString())
+      this.props.data.contract.methods.updateHash(stats.cid.toString()).send({from:this.props.data.account}).then((receipt)=>{
+        console.log(receipt)
+      })
     } catch(err){
       window.alert(err)
     }
@@ -120,6 +129,10 @@ export class Send extends Component{
       console.log(this.props.data)
       var dirName = '/u' + this.props.data.account;
       await ipfs.files.rm(dirName, { recursive: true })
+      //conduct a delete transaction
+      this.props.data.contract.methods.deleteUser().send({from:this.props.data.account}).then((receipt)=>{
+        console.log(receipt)
+      })
       console.log('Eth account deleted:',this.props.data.account)
     } catch(err){
       window.alert(err)

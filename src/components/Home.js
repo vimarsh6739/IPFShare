@@ -13,9 +13,9 @@ export class Home extends Component{
     
   onSubmit = async (event) => {
     event.preventDefault();
-    //create account through blockchain txn
-    //and a root folder for the current user on the chain
     this.setState({loading:1})
+
+    //create root folder for the current user on the chain
     console.log(this.props.data)
     try{
       var dirName = '/u' + this.props.data.account;
@@ -24,6 +24,10 @@ export class Home extends Component{
       console.log('Eth account:',this.props.data.account)
       const stats = await ipfs.files.stat(dirName)
       console.log('Ipfs dir stats:',stats)
+      //Add account entry
+      this.props.data.contract.methods.addUser(stats.cid.toString()).send({from:this.props.data.account}).then((receipt)=>{
+        console.log(receipt)
+      })
     } catch(err){
       window.alert(err)
     } finally {

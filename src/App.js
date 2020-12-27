@@ -6,6 +6,8 @@ import {Header} from './components/Header'
 import {Send} from './components/Send'
 import {Home} from './components/Home'
 import {Search} from './components/Search'
+import Users from './abis/Users.json'
+
 class App extends Component {
 
   async componentDidMount(){
@@ -38,13 +40,30 @@ class App extends Component {
     console.log(accounts)
     this.setState({account: accounts[0]})
 
-    //Load contract abi - to be implemented
-
+    //Load contract abi and address
+    const networkId = await web3.eth.net.getId()
+    console.log(networkId)
+    const networkData = Users.networks[networkId];
+    if(networkData){
+      const abi = Users.abi
+      const address = networkData.address
+      const contract = new web3.eth.Contract(abi, address)
+      this.setState({contract})
+      console.log(contract)
+    }else{
+      window.alert('Smart contract not deployed to this network!!')
+    }
   }
 
   async isAuthenticated(){
     //query contract and set state
-    this.setState({isAuth: false})
+    const rootHash = await this.state.contract.methods.readHash().call()
+    console.log(rootHash)
+    if(rootHash===''){
+      this.setState({isAuth: false})
+    }else{
+      this.setState({isAuth:true})
+    }
   }
 
   constructor(props){

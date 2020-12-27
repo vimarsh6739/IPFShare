@@ -59,7 +59,10 @@ class App extends Component {
   }
 
   setAuthTrue(){this.setState({isAuth: true})}
-  setAuthFalse(){this.setState({isAuth: false})}
+  setAuthFalse(){
+    this.setState({isAuth: false})
+    console.log(this.state.isAuth)
+  }
 
   render() {
     return (

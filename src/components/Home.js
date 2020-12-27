@@ -17,14 +17,19 @@ export class Home extends Component{
     //and a root folder for the current user on the chain
     this.setState({loading:1})
     console.log(this.props.data)
-    var dirName = '/u' + this.props.data.account;
-    // await ipfs.files.rm(dirName, { recursive: true })
-    await ipfs.files.mkdir(dirName)
-    //Get directory hash and other stats
-    console.log('Eth account:',this.props.data.account)
-    const stats = await ipfs.files.stat(dirName)
-    console.log('Ipfs dir stats:',stats)
-    this.setState({loading:2})
+    try{
+      var dirName = '/u' + this.props.data.account;
+      await ipfs.files.mkdir(dirName)
+      //Get directory hash and other stats
+      console.log('Eth account:',this.props.data.account)
+      const stats = await ipfs.files.stat(dirName)
+      console.log('Ipfs dir stats:',stats)
+    } catch(err){
+      window.alert(err)
+    } finally {
+      this.setState({loading:2})
+    }
+
   }
 
   render(){
@@ -40,7 +45,7 @@ export class Home extends Component{
         <div className="new-user">
           <p>It seems that you don't have a shared account with our service.</p>
           <p>Register below to create an account. This is compulsory in order to work with your remote files, as well as other files on the shared network. </p>
-          <p>Creating an account will make a new directory specific to your public address</p>
+          <p>Creating an account will make a new directory specific to your wallet address</p>
           <Form onSubmit={this.onSubmit}>
             <Button bsstyle="primary" type="submit">Create Account</Button>
           </Form>

@@ -31,13 +31,17 @@ class Add extends Component{
   
   onSubmit = async (event) => {
     event.preventDefault();
-    await ipfs.files.write(this.state.filepath, this.state.buffer, {create: true})
-    const stats = await ipfs.files.stat(this.state.filepath)
-    console.log(stats)
+    try{
+      await ipfs.files.write(this.state.filepath, this.state.buffer, {create: true})
+      const stats = await ipfs.files.stat(this.state.filepath)
+      console.log(stats)
+    } catch(err){
+      window.alert(err)
+    }
   };
 
   render(){
-    return(<div className="AddFile">
+    return(<div className="AddFile" style={{textAlign:'left'}}>
       <h5>Add File</h5>
       <Form onSubmit={this.onSubmit}>
         <Form.Group>
@@ -51,10 +55,50 @@ class Add extends Component{
 }
 
 class Remove extends Component{
+
+  constructor(props){
+    super(props);
+    this.state = {
+      filename: ''
+    }
+  }
+
+  onSubmit = async (event) => {
+    event.preventDefault();
+    // console.log('Recorded filename::', this.state.filename)
+    var filepath = '/u' + this.props.data.account + '/' + this.state.filename;
+    try{
+      await ipfs.files.rm(filepath)
+      console.log('Deleted file', filepath)
+    } catch(err){
+      window.alert(err)
+    }
+  }
   render(){
     return(
-      <div className="RmFile" >
+      <div className="RmFile" style={{textAlign:'left'}}>
         <h5>Remove File</h5>
+        <Form onSubmit={this.onSubmit}>
+          <Form.Group controlId="formBasicText">
+            <Form.Label>File name</Form.Label>
+            <Form.Control
+              className="textFeedback"
+              as="input"
+              rows="3"
+              placeholder="myfilename.txt"
+              value={this.state.filename}
+              onChange={e => this.setState({ filename: e.target.value })}
+              type="text"
+            />            
+            <Form.Text className="text-muted">
+              This file will be deleted from your ipfs folder.
+            </Form.Text>
+          </Form.Group>
+
+          <Button variant="primary" type="submit">
+            Submit
+          </Button>
+        </Form>
       </div>
     );
   }
@@ -69,12 +113,19 @@ export class Send extends Component{
     }
   }
   
-  onSubmit = async (event) => {
+  onDelete = async (event) => {
     event.preventDefault();
-    console.log(this.props.data)
-    var dirName = '/u' + this.props.data.account;
-    await ipfs.files.rm(dirName, { recursive: true })
-    console.log('Eth account deleted:',this.props.data.account)
+    this.setState({loading:1})
+    try{
+      console.log(this.props.data)
+      var dirName = '/u' + this.props.data.account;
+      await ipfs.files.rm(dirName, { recursive: true })
+      console.log('Eth account deleted:',this.props.data.account)
+    } catch(err){
+      window.alert(err)
+    } finally{
+      this.setState({loading:2})
+    }
   }
 
   render(){
@@ -86,11 +137,12 @@ export class Send extends Component{
         <br /><hr />
         <Remove data={this.props.data}/>
         <br /><hr />
-        <div className="Delete">
+        <div className="Delete" style={{textAlign:'left'}}>
           <h5>Remove All Data</h5>
-          <Form onSubmit={this.onSubmit}>
+          <Form onSubmit={this.onDelete}>
             <Button variant="danger" bsstyle="primary" type="submit">Delete</Button>
           </Form>
+          <br />
           {this.state.loading ===1 && 
             <Spinner animation="border" role="status">
               <span className="sr-only">Loading...</span>
@@ -98,11 +150,11 @@ export class Send extends Component{
           }
           {this.state.loading === 2 &&
             <div className="success-msg">
-              <Form onSubmit={this.props.handle}>
-                <Button bsstyle="primary" type="submit">Refresh</Button>
-              </Form>
-              <p>Succesfully deleted.</p>
-            </div>
+            <Form onSubmit={this.props.handle}>
+              <Button bsstyle="primary" type="submit">Refresh</Button>
+            </Form>
+            <p>Data succesfully deleted</p>
+          </div>
           }
         </div>
       </div>

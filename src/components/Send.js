@@ -103,9 +103,7 @@ class Remove extends Component{
     var filepath = dirName + '/' + this.state.filename;
     try{
       await ipfs.files.rm(filepath)
-      console.log('Deleted file', filepath)
       const stats = await ipfs.files.stat(dirName)
-      console.log('Ipfs dir new Hash:',stats.cid.toString())
       this.props.data.contract.methods.updateHash(stats.cid.toString()).send({from:this.props.data.account}).then((receipt)=>{
         this.setState({
           txnHash: receipt.transactionHash,
@@ -193,7 +191,7 @@ export class Send extends Component{
           gasUsed: receipt.gasUsed
         })
       })
-      console.log('Eth account deleted:',this.props.data.account)
+      console.log('Ethereum account deleted:',this.props.data.account)
     } catch(err){
       window.alert(err)
     } finally{

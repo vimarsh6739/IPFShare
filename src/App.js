@@ -25,7 +25,6 @@ class App extends Component {
     }
     else if(window.web3){
       window.web3 = new Web3(window.web3.currentProvider)
-      console.log('Accessed current provider')
     }
     else{
       window.alert('Non-ethereum browser detected. Install metamask!!')

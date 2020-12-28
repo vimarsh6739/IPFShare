@@ -24,9 +24,8 @@ export class Home extends Component{
       var dirName = '/u' + this.props.data.account;
       await ipfs.files.mkdir(dirName)
       //Get directory hash and other stats
-      console.log('Ethereum account:',this.props.data.account)
+      console.log('Ethereum account accessed:',this.props.data.account)
       const stats = await ipfs.files.stat(dirName)
-      console.log('Ipfs directory stats:',stats)
       //Add account entry
       this.props.data.contract.methods.addUser(stats.cid.toString()).send({from:this.props.data.account}).then((receipt)=>{
         this.setState({
@@ -48,7 +47,6 @@ export class Home extends Component{
     this.props.data.contract.methods.readHash().call({from:this.props.data.account})
     .then(function(rootHash){
       //open in new window
-      console.log(rootHash)
       const url = baseUrl + rootHash
       const newWindow = window.open(url, '_blank', 'noopener,noreferrer')
       if (newWindow) newWindow.opener = null

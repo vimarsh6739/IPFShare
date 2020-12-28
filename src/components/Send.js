@@ -37,7 +37,8 @@ class Add extends Component{
     event.preventDefault();
     try{
       await ipfs.files.write(this.state.filepath, this.state.buffer, {create: true})
-      const stats = await ipfs.files.stat(this.state.filepath)
+      const dirPath = '/u'+this.props.data.account
+      const stats = await ipfs.files.stat(dirPath)
       this.props.data.contract.methods.updateHash(stats.cid.toString()).send({from:this.props.data.account}).then((receipt)=>{
         this.setState({
           txnHash: receipt.transactionHash,

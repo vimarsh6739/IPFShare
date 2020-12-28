@@ -185,8 +185,7 @@ export class Send extends Component{
       var dirName = '/u' + this.props.data.account;
       await ipfs.files.rm(dirName, { recursive: true })
       //conduct a delete transaction
-      this.props.data.contract.methods.deleteUser().send({from:this.props.data.account}).then((receipt)=>{
-      }).then((receipt) => {
+      this.props.data.contract.methods.deleteUser().send({from:this.props.data.account}).then((receipt) => {
         this.setState({
           txnHash: receipt.transactionHash,
           blockHash: receipt.blockHash,

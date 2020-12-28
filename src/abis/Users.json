@@ -5826,6 +5826,70 @@
     "version": "0.5.16+commit.9c3226ce.Emscripten.clang"
   },
   "networks": {
+    "3": {
+      "events": {
+        "0x642fae9d0bdca764daf250fc90831d6e88318a4ce78836d46fbbf63c282c6c20": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "user",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "string",
+              "name": "Qmhash",
+              "type": "string"
+            }
+          ],
+          "name": "Add",
+          "type": "event"
+        },
+        "0x0ae95ec727ed7e8d6131cff59570fa1afc6172c0beec9da3f7ee05ca91aebe0f": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "user",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "string",
+              "name": "Qmhash",
+              "type": "string"
+            }
+          ],
+          "name": "Delete",
+          "type": "event"
+        },
+        "0xc6ee1e1e08307ce2d854c77911cf72b51710027139dd730756959e981480edb7": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "user",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "string",
+              "name": "Qmhash",
+              "type": "string"
+            }
+          ],
+          "name": "Update",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0xF6b9Ab28AA8f442f944b554E663f09217d8ad2E5",
+      "transactionHash": "0xaf32da0d7d38efa9d89aeba6d343484a6690aaee07ceb24c0460393313870b99"
+    },
     "5777": {
       "events": {
         "0x642fae9d0bdca764daf250fc90831d6e88318a4ce78836d46fbbf63c282c6c20": {
@@ -5892,7 +5956,7 @@
     }
   },
   "schemaVersion": "3.3.3",
-  "updatedAt": "2020-12-27T19:45:25.191Z",
+  "updatedAt": "2020-12-28T20:02:11.754Z",
   "networkType": "ethereum",
   "devdoc": {
     "methods": {}

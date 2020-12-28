@@ -16,13 +16,12 @@ class App extends Component {
     await this.isAuthenticated();
   }
 
-
   async loadWeb3(){
     if(window.ethereum){
       window.web3 = new Web3(window.ethereum)
       await window.ethereum.enable()
       window.ethereum.autoRefreshOnNetworkChange = false
-      console.log('Accessed ethereum')
+      console.log('Accessed metamask')
     }
     else if(window.web3){
       window.web3 = new Web3(window.web3.currentProvider)
@@ -37,19 +36,16 @@ class App extends Component {
     // Load account
     const web3 = window.web3
     const accounts = await web3.eth.getAccounts()
-    console.log(accounts)
     this.setState({account: accounts[0]})
     console.log('Connected to, ',this.state.account)
     //Load contract abi and address
     const networkId = await web3.eth.net.getId()
-    console.log(networkId)
     const networkData = Users.networks[networkId];
     if(networkData){
       const abi = Users.abi
       const address = networkData.address
       const contract = new web3.eth.Contract(abi, address)
       this.setState({contract})
-      console.log(contract)
     }else{
       window.alert('Smart contract not deployed to this network!!')
     }
@@ -58,7 +54,6 @@ class App extends Component {
   async isAuthenticated(){
     //query contract and set state
     const rootHash = await this.state.contract.methods.readHash().call({from:this.state.account})
-    console.log('root hash is', rootHash)
     if(rootHash===''){
       this.setState({isAuth: false})
     }else{
@@ -78,10 +73,7 @@ class App extends Component {
   }
 
   setAuthTrue(){this.setState({isAuth: true})}
-  setAuthFalse(){
-    this.setState({isAuth: false})
-    console.log(this.state.isAuth)
-  }
+  setAuthFalse(){this.setState({isAuth: false})}
 
   render() {
     return (

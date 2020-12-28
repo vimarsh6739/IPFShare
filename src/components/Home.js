@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Form, Button, Spinner} from 'react-bootstrap';
+import {Form, Button, Spinner, Table} from 'react-bootstrap';
 import ipfs from '../ipfs'
 
 export class Home extends Component{
@@ -7,7 +7,11 @@ export class Home extends Component{
   constructor(props){
     super(props);
     this.state={
-      loading:0
+      loading:0,
+      txnHash:null,
+      blockHash:null,
+      blockNum:0,
+      gasUsed:0,
     }
   }
     
@@ -16,24 +20,36 @@ export class Home extends Component{
     this.setState({loading:1})
 
     //create root folder for the current user on the chain
-    console.log(this.props.data)
     try{
       var dirName = '/u' + this.props.data.account;
       await ipfs.files.mkdir(dirName)
       //Get directory hash and other stats
-      console.log('Eth account:',this.props.data.account)
+      console.log('Ethereum account:',this.props.data.account)
       const stats = await ipfs.files.stat(dirName)
-      console.log('Ipfs dir stats:',stats)
+      console.log('Ipfs directory stats:',stats)
       //Add account entry
       this.props.data.contract.methods.addUser(stats.cid.toString()).send({from:this.props.data.account}).then((receipt)=>{
-        console.log(receipt)
+        this.setState({
+          txnHash: receipt.transactionHash,
+          blockHash: receipt.blockHash,
+          blockNum: receipt.blockNumber,
+          gasUsed: receipt.gasUsed
+        })
       })
     } catch(err){
       window.alert(err)
     } finally {
       this.setState({loading:2})
     }
+  }
 
+  async openNewTab(baseUrl){
+    //Read hash from account
+    const rootHash = await this.props.data.contract.methods.readHash().call({from:this.props.account})
+    //open in new window
+    const url = baseUrl + rootHash
+    const newWindow = window.open(url, '_blank', 'noopener,noreferrer')
+    if (newWindow) newWindow.opener = null
   }
 
   render(){
@@ -41,8 +57,11 @@ export class Home extends Component{
     <div className="Home">
       <h3>Hey there, {this.props.data.account}!</h3>
       {this.props.data.isAuth &&
-        <div className="usr-recognized">
-          Welcome. To view your folder, go to this <a href="http://167.71.227.116:8080/ipfs/QmeBUSeuMJm721hAE5xSkfp2tHGx1zyEdRM1sLLvXz4Dmd" target="_blank" rel="noreferrer">link</a>
+        <div className="user-recognized">
+          Welcome. To view your folder, go to this <br />
+          <Button variant="link" onClick={() => this.openNewTab('https://ipfs.io/ipfs/')}>
+            link
+          </Button>
         </div>
       }
       {!this.props.data.isAuth &&
@@ -64,8 +83,18 @@ export class Home extends Component{
             <div className="success-msg">
               <Form onSubmit={this.props.handle}>
                 <Button bsstyle="primary" type="submit">Refresh</Button>
-              </Form>
-              <p>Transaction succeded. Click to refresh.(Print etherscan ref.)</p>
+              </Form> <br />
+              <Table striped bordered size="sm">
+                <thead>
+                  <tr><th>#</th><th>Value</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>Transaction hash</td><td>{this.state.txnHash}</td></tr>
+                  <tr><td>Block Hash</td><td>{this.state.blockHash}</td></tr>
+                  <tr><td>Block Number</td><td>{this.state.blockNum}</td></tr>
+                  <tr><td>Gas used</td><td>{this.state.gasUsed}</td></tr>
+                </tbody>
+              </Table>
             </div>
           }
         </div>

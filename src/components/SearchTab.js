@@ -18,6 +18,7 @@ import Remove from '@material-ui/icons/Remove';
 import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
+import InsertLinkIcon from '@material-ui/icons/InsertLink';
 
 const tableIcons = {
     Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -36,7 +37,8 @@ const tableIcons = {
     Search: forwardRef((props, ref) => <Search {...props} ref={ref} />),
     SortArrow: forwardRef((props, ref) => <ArrowDownward {...props} ref={ref} />),
     ThirdStateCheck: forwardRef((props, ref) => <Remove {...props} ref={ref} />),
-    ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />)
+    ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />),
+    LinkIcon: forwardRef((props, ref) => <InsertLinkIcon {...props} ref={ref} />)
   };
 
 const all = require('it-all');
@@ -61,9 +63,9 @@ export class SearchTab extends Component{
     const folders = folderMeta.filter(f => f.type==="directory").map((f,i)=>({
       id:i,
       name:f.name,
+      type:'Directory',
       cid:f.cid.toString()
     }))
-    console.log('Got folders',folders)
     this.setState({folders})
   }
 
@@ -71,20 +73,18 @@ export class SearchTab extends Component{
     // Get files and populate data
     Promise.all(this.state.folders.map(async (f,i)=>{
       const path = '/'+f.name
-      console.log('Getting:',path,'index',i)
       return await all(ipfs.files.ls(path))
     })).then((results)=>{
-      console.log('All files',results)
       var data = [].concat.apply(this.state.folders,results.map((fs,pid)=>{
         return fs.map((f)=>({
-          id: -1,
+          id: -1,//gives some weird bug without this fk it
           parentId: pid,
+          type: 'File',
           name:f.name,
           cid:f.cid.toString()
         }))
       }))
       this.setState({data})
-      console.log('Data',data)
     })
   }
 
@@ -96,14 +96,25 @@ export class SearchTab extends Component{
         data={this.state.data}
         columns={[
           { title: 'Name', field: 'name' },
-          { title: 'Hash', field: 'cid' },
+          {title: 'Filetype',field:'type'},
+          { title: 'CID', field: 'cid' },
         ]}
         parentChildData={(row, rows) => rows.find(a => a.id === row.parentId)}
         options={{
-          selection: true,
           search: true,
-          searchFieldAlignment: 'right'
+          searchFieldAlignment: 'right',
+          actionsColumnIndex: -1
         }}
+        actions={[
+          {
+            icon:() => <InsertLinkIcon />,
+            tooltip: 'View',
+            onClick: (event, rowData) => {
+              const url = 'https://ipfs.io/ipfs/'+rowData.cid
+              window.open(url, '_blank', 'noopener,noreferrer')
+            }
+          }
+        ]}
       />
     )
   }

@@ -45,11 +45,14 @@ export class Home extends Component{
 
   async openNewTab(baseUrl){
     //Read hash from account
-    const rootHash = await this.props.data.contract.methods.readHash().call({from:this.props.account})
-    //open in new window
-    const url = baseUrl + rootHash
-    const newWindow = window.open(url, '_blank', 'noopener,noreferrer')
-    if (newWindow) newWindow.opener = null
+    this.props.data.contract.methods.readHash().call({from:this.props.data.account})
+    .then(function(rootHash){
+      //open in new window
+      console.log(rootHash)
+      const url = baseUrl + rootHash
+      const newWindow = window.open(url, '_blank', 'noopener,noreferrer')
+      if (newWindow) newWindow.opener = null
+    })
   }
 
   render(){

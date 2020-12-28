@@ -24,8 +24,8 @@ export class Header extends React.Component {
                         <Nav.Link>Your Data</Nav.Link>
                     </IndexLinkContainer>
 
-                    <IndexLinkContainer to="/search">
-                        <Nav.Link>Search</Nav.Link>
+                    <IndexLinkContainer to="/searchtab">
+                        <Nav.Link>Search Tab</Nav.Link>
                     </IndexLinkContainer>
                 </Nav>
             </Navbar.Collapse>

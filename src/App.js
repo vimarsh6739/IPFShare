@@ -5,7 +5,7 @@ import Web3 from 'web3';
 import {Header} from './components/Header'
 import {Send} from './components/Send'
 import {Home} from './components/Home'
-import {Search} from './components/Search'
+import {SearchTab} from './components/SearchTab'
 import Users from './abis/Users.json'
 
 class App extends Component {
@@ -39,7 +39,7 @@ class App extends Component {
     const accounts = await web3.eth.getAccounts()
     console.log(accounts)
     this.setState({account: accounts[0]})
-
+    console.log('Connected to, ',this.state.account)
     //Load contract abi and address
     const networkId = await web3.eth.net.getId()
     console.log(networkId)
@@ -57,8 +57,8 @@ class App extends Component {
 
   async isAuthenticated(){
     //query contract and set state
-    const rootHash = await this.state.contract.methods.readHash().call()
-    console.log(rootHash)
+    const rootHash = await this.state.contract.methods.readHash().call({from:this.state.account})
+    console.log('root hash is', rootHash)
     if(rootHash===''){
       this.setState({isAuth: false})
     }else{
@@ -102,9 +102,9 @@ class App extends Component {
                   handle={this.setAuthFalse}
                 />)}
             />
-            <Route exact path="/search" 
+            <Route exact path="/searchtab" 
               render={(props) =>
-                (<Search {...props}
+                (<SearchTab {...props}
                   data={this.state} 
                 />)} 
             />

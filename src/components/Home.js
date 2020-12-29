@@ -21,6 +21,7 @@ export class Home extends Component{
 
     //create root folder for the current user on the chain
     try{
+      if(!this.props.data.contract) throw "You are either using a non-ethereum browser or the contract is not deployed to this network!"
       var dirName = '/u' + this.props.data.account;
       await ipfs.files.mkdir(dirName)
       //Get directory hash and other stats
@@ -35,11 +36,10 @@ export class Home extends Component{
           gasUsed: receipt.gasUsed
         })
       })
+      this.setState({loading:2})
     } catch(err){
       window.alert(err)
-    } finally {
-      this.setState({loading:2})
-    }
+    } 
   }
 
   async openNewTab(baseUrl){

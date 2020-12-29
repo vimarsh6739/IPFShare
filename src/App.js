@@ -21,12 +21,12 @@ class App extends Component {
       window.web3 = new Web3(window.ethereum)
       await window.ethereum.enable()
       window.ethereum.autoRefreshOnNetworkChange = false
-      console.log('Accessed metamask')
     }
     else if(window.web3){
       window.web3 = new Web3(window.web3.currentProvider)
     }
     else{
+      this.setState({isAuth:false})
       window.alert('Non-ethereum browser detected. Install metamask!!')
     }
   }
@@ -36,7 +36,6 @@ class App extends Component {
     const web3 = window.web3
     const accounts = await web3.eth.getAccounts()
     this.setState({account: accounts[0]})
-    console.log('Connected to, ',this.state.account)
     //Load contract abi and address
     const networkId = await web3.eth.net.getId()
     const networkData = Users.networks[networkId];
@@ -46,6 +45,7 @@ class App extends Component {
       const contract = new web3.eth.Contract(abi, address)
       this.setState({contract})
     }else{
+      this.setState({isAuth:false})
       window.alert('Smart contract not deployed to this network!!')
     }
   }

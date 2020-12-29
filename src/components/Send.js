@@ -36,6 +36,7 @@ class Add extends Component{
   onSubmit = async (event) => {
     event.preventDefault();
     try{
+      if(!this.props.data.contract) throw "You are either using a non-ethereum browser or the contract is not deployed to this network!"
       await ipfs.files.write(this.state.filepath, this.state.buffer, {create: true})
       const dirPath = '/u'+this.props.data.account
       const stats = await ipfs.files.stat(dirPath)
@@ -102,6 +103,7 @@ class Remove extends Component{
     var dirName = '/u' + this.props.data.account
     var filepath = dirName + '/' + this.state.filename;
     try{
+      if(!this.props.data.contract) throw "You are either using a non-ethereum browser or the contract is not deployed to this network!"
       await ipfs.files.rm(filepath)
       const stats = await ipfs.files.stat(dirName)
       this.props.data.contract.methods.updateHash(stats.cid.toString()).send({from:this.props.data.account}).then((receipt)=>{
@@ -180,6 +182,7 @@ export class Send extends Component{
     event.preventDefault();
     this.setState({loading:1})
     try{
+      if(!this.props.data.contract) throw "You are either using a non-ethereum browser or the contract is not deployed to this network!"
       var dirName = '/u' + this.props.data.account;
       await ipfs.files.rm(dirName, { recursive: true })
       //conduct a delete transaction

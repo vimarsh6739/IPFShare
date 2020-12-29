@@ -1,3 +1,3 @@
 const ipfsClient = require('ipfs-http-client')
-const ipfs = ipfsClient({host: '34.93.89.211', port: '80', protocol: 'http'})
+const ipfs = ipfsClient({host: 'www.ipfshare.tk', port: '443', protocol: 'https'})
 export default ipfs;
